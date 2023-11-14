@@ -1,0 +1,33 @@
+{
+  "name": "punch-card-ecommerce",
+  "version": "1.0.0",
+  "description": "### Description",
+  "main": "./src/server.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node ./src/server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fikcup/punch-card-ecommerce.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fikcup/punch-card-ecommerce/issues"
+  },
+  "homepage": "https://github.com/Fikcup/punch-card-ecommerce#readme",
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@apollo/server": "^4.9.5",
+    "@graphql-tools/schema": "^10.0.0",
+    "graphql": "^16.8.1",
+    "graphql-tag": "^2.12.6",
+    "mysql2": "^3.6.3",
+    "typeorm": "^0.3.17"
+  }
+}
