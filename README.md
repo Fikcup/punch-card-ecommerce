@@ -12,15 +12,14 @@ Ecommerce store where an admin can set a coupon to automatically distribute to a
 
 ### Requirements
 
-* Admin login
+* Admin & Customer login
 * Customer sign up
-* Customer login
 * Get catalog
 * Get item
 * Update item
 * Create item
 * Delete item
-* View store history
+* View store overview
 * Create coupon
 * View own coupons
 * View store coupons
@@ -45,16 +44,25 @@ Ecommerce store where an admin can set a coupon to automatically distribute to a
 ## Database
 
 ### User
-Attributes: UserID (Primary Key), Type(admin, customer), Username, Password, Email, FirstName, LastName.
+Attributes: UserID (Primary Key), Type(admin, customer), Username, Password, Email, FirstName, LastName, Timestamps.
 
 ### Product
-Attributes: ProductID (Primary Key), Name, Description, Price, StockQuantity.
+Attributes: ProductID (Primary Key), Name, Description, Price, StockQuantity, Timestamps.
 
 ### Order
-Attributes: OrderID (Primary Key), UserID (Foreign Key), OrderDate, TotalAmount.
+Attributes: OrderID (Primary Key), UserID (Foreign Key), OrderDate.
 
 ### OrderItem
 Attributes: OrderItemID (Primary Key), OrderID (Foreign Key), ProductID (Foreign Key), Quantity, Subtotal.
 
+### OrderCoupon
+Attributes: OrderCouponID (Primary Key), OrderID (Foreign Key), CouponID (Foreign Key).
+
+### Coupon
+Attributes: CouponID (Primary Key), UserID (Foreign Key), CouponCode, DollarAmount, DiscountPercentage, MaxValue, Active.
+
+### CustomerCoupon
+Attributes: OrderID (Primary Key), UserID (Foreign Key), Used.
+
 ### Invoice
-Attributes: InvoiceID (Primary Key), OrderID (Foreign Key), PaymentDate, PaymentMethod, Amount.
+Attributes: InvoiceID (Primary Key), OrderID (Foreign Key), PaymentDate, PaymentToken, Amount, Status.
