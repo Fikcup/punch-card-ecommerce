@@ -1,26 +1,27 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column, RelationId, ManyToMany } from 'typeorm';
-import { IsBoolean } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn } from 'typeorm';
+import { IsBoolean, IsInt, IsPositive } from 'class-validator';
 
 // int dependencies
 import { Coupon } from './Coupon';
-import { Order } from './Order';
 
-@Entity()
+@Entity("customercoupons")
 export class CustomerCoupon {  
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    @RelationId((order: Order) => order.id)
+    @IsPositive()
+    @IsInt()
     orderId: number;
 
     @Column()
-    @RelationId((coupon: Coupon) => coupon.id)
+    @IsPositive()
+    @IsInt()
     couponId: number;
 
-    @Column()Q
     @ManyToMany(() => Coupon, (coupon: Coupon) => coupon.id)
+    @JoinColumn()
     coupon: Coupon;
 
     @Column()

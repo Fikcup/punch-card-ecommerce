@@ -2,7 +2,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { IsPositive } from 'class-validator';
 
-@Entity()
+@Entity("products")
 export class Product {  
     @PrimaryGeneratedColumn()
     id: number;

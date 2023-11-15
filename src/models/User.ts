@@ -1,6 +1,6 @@
 // ext dependencies
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany, JoinColumn } from 'typeorm';
-import { IsEmail } from 'class-validator';
+import { IsEmail, MinLength } from 'class-validator';
 
 // int dependencies
 import { Order } from './Order';
@@ -10,7 +10,7 @@ export enum UserType {
     Customer = "CUSTOMER"
 };
 
-@Entity()
+@Entity("users")
 export class User {  
     @PrimaryGeneratedColumn()
     id: number;
@@ -22,6 +22,7 @@ export class User {
     type: UserType;
 
     @Column({ unique: true })
+    @MinLength(5)
     username: string;
 
     @Column({ unique: true })
@@ -29,6 +30,7 @@ export class User {
     email: string;
 
     @Column({ select: false })
+    @MinLength(8)
     password: string;
 
     @Column()

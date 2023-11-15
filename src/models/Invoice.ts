@@ -1,22 +1,20 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column, RelationId } from 'typeorm';
-import { IsDate, IsNumber, IsPositive, IsString } from 'class-validator';
-
-// int dependencies
-import { Order } from "./Order";
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { IsDate, IsInt, IsNumber, IsPositive, IsString } from 'class-validator';
 
 export enum InvoiceStatus {
     Paid = "PAID",
     Unpaid = "UNPAID"
 };
 
-@Entity()
+@Entity("invoices")
 export class Invoice {  
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    @RelationId((user: Order) => user.id)
+    @IsPositive()
+    @IsInt()
     orderId: number;
 
     @Column()

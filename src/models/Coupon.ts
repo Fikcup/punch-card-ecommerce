@@ -1,5 +1,5 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column, RelationId } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import {
     IsBoolean,
     IsNumber,
@@ -9,17 +9,10 @@ import {
     MinLength,
 } from 'class-validator';
 
-// int dependencies
-import { User } from "./User"
-
-@Entity()
+@Entity("coupons")
 export class Coupon {  
     @PrimaryGeneratedColumn()
     id: number;
-
-    @Column()
-    @RelationId((user: User) => user.id)
-    userId: number;
 
     @Column()
     @IsString()
@@ -41,7 +34,7 @@ export class Coupon {
     @Column({ nullable: true })
     @IsPositive()
     @IsNumber()
-    maxValue?: number;
+    maxDollarValue?: number;
 
     @Column()
     @IsBoolean()

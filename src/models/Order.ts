@@ -1,25 +1,25 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column, RelationId, OneToOne } from 'typeorm';
-import { IsDate } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { IsDate, IsInt, IsPositive } from 'class-validator';
 
 // int dependencies
-import { User } from "./User";
 import { Invoice } from './Invoice';
 
-@Entity()
+@Entity("orders")
 export class Order {  
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    @RelationId((user: User) => user.id)
+    @IsPositive()
+    @IsInt()
     userId: number;
 
     @Column()
     @IsDate()
     orderDate: Date;
 
-    @Column()
     @OneToOne(() => Invoice, (invoice) => invoice.id)
+    @JoinColumn()
     invoice: Invoice;
 }

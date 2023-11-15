@@ -1,5 +1,5 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column, RelationId, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import {
     IsPositive,
     IsInt,
@@ -7,23 +7,24 @@ import {
 
 // int dependencies
 import { Product } from './Product';
-import { Order } from './Order';
 
-@Entity()
+@Entity("orderitems")
 export class OrderItem {  
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    @RelationId((order: Order) => order.id)
+    @IsPositive()
+    @IsInt()
     orderId: number;
 
     @Column()
-    @RelationId((product: Product) => product.id)
+    @IsPositive()
+    @IsInt()
     productId: number;
 
-    @Column()
     @ManyToOne(() => Product, (product: Product) => product.id)
+    @JoinColumn()
     product: Product;
 
     @Column()
