@@ -36,6 +36,7 @@ export class InitializeTable1700023581168 implements MigrationInterface {
                 paymentDate DATETIME NOT NULL,
                 paymentToken VARCHAR(255) NOT NULL,
                 subTotal FLOAT NOT NULL,
+                status ENUM('PAID', 'REFUNDED') NOT NULL DEFAULT 'PAID',
                 FOREIGN KEY (orderId) REFERENCES orders(id)
             );
         `);
@@ -43,10 +44,12 @@ export class InitializeTable1700023581168 implements MigrationInterface {
             CREATE TABLE coupons (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 couponCode VARCHAR(255) NOT NULL,
+                purchasesRequired INT NOT NULL,
                 dollarAmount INT NULL,
                 discountPercentage INT NULL,
                 maxDollarValue INT NULL,
-                active TINYINT(1) NOT NULL DEFAULT 1
+                active TINYINT(1) NOT NULL DEFAULT 1,
+                UNIQUE KEY unique_coupon_couponCode (couponCode)
             );
         `);
         await queryRunner.query(`

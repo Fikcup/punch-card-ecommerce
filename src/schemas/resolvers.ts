@@ -1,3 +1,13 @@
+// int dependencies
+import { issueNewActiveCoupon } from "../services/coupons/create"
+import { createProduct } from "../services/products/create";
+import { softDeleteProduct } from "../services/products/delete";
+import { getProductCatalog } from "../services/products/query";
+import { updateProduct } from "../services/products/update";
+import { getStoreOverview } from "../services/store/query";
+import { couponTransformer } from "../transformers/coupon";
+import { productTransformer, productArrayTransformer } from "../transformers/product";
+
 export const resolvers = {
     Query: {
         async me() {
@@ -7,16 +17,11 @@ export const resolvers = {
             // TODO: return data
         },
         async getCatalog() {
-            // TODO: validate input
-            // TODO: call methods
-            // TODO: transform data to match gql types
-            // TODO: return data
+            const productCatalog = await getProductCatalog();;
+            return productArrayTransformer(productCatalog);
         },
         async getStoreOverview() {
-            // TODO: validate input
-            // TODO: call methods
-            // TODO: transform data to match gql types
-            // TODO: return data
+            return await getStoreOverview();
         },
         async validateToken() {
             // TODO: validate input
@@ -45,29 +50,25 @@ export const resolvers = {
             // TODO: transform data to match gql types
             // TODO: return data
         },
-        async adminUpdateProduct() {
+        async adminUpdateProduct(_, { input }) {
             // TODO: validate input
-            // TODO: call methods
-            // TODO: transform data to match gql types
-            // TODO: return data
+            const updatedProduct = await updateProduct(input);
+            return productTransformer(updatedProduct);
         },
-        async adminCreateProduct() {
+        async adminCreateProduct(_,{ input }) {
             // TODO: validate input
-            // TODO: call methods
-            // TODO: transform data to match gql types
-            // TODO: return data
+            const newProduct = await createProduct(input);
+            return productTransformer(newProduct);
         },
-        async adminDeleteProduct() {
+        async adminDeleteProduct(_, { productId }) {
             // TODO: validate input
-            // TODO: call methods
-            // TODO: transform data to match gql types
-            // TODO: return data
+            const deletedProduct = await softDeleteProduct(Number(productId));
+            return productTransformer(deletedProduct);
         },
-        async adminChangeActiveCoupon() {
+        async adminChangeActiveCoupon(_, { input } ) {
             // TODO: validate input
-            // TODO: call methods
-            // TODO: transform data to match gql types
-            // TODO: return data
+            const newCoupon = await issueNewActiveCoupon(input);
+            return couponTransformer(newCoupon);
         }
     }
 }
