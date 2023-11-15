@@ -66,3 +66,16 @@ Attributes: OrderID (Primary Key), UserID (Foreign Key), Used.
 
 ### Invoice
 Attributes: InvoiceID (Primary Key), OrderID (Foreign Key), PaymentDate, PaymentToken, Amount, Status.
+
+## Setup
+
+### Database Initialization
+
+Prerequisites
+* MySQL is installed
+* MySQL server is running
+
+Run below SQL query to initialize the punchcard database.
+```
+CREATE DATABASE IF NOT EXISTS punchcard;
+```
