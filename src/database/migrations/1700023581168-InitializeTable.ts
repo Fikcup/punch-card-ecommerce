@@ -47,7 +47,8 @@ export class InitializeTable1700023581168 implements MigrationInterface {
                 dollarAmount INT NULL,
                 discountPercentage INT NULL,
                 maxDollarValue INT NULL,
-                active TINYINT(1) NOT NULL DEFAULT 1
+                active TINYINT(1) NOT NULL DEFAULT 1,
+                UNIQUE KEY unique_coupon_couponCode (couponCode)
             );
         `);
         await queryRunner.query(`

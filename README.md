@@ -90,3 +90,54 @@ CREATE DATABASE IF NOT EXISTS punchcard;
 ```
 npm run migrate:run:dev
 ```
+
+## Queries & Mutations
+
+<p><i>Note: When you initialize the server, if you open the relevant port, it will open Apollo Studio. This will give you access to all available queries and mutations as well as the documentation. Example inputs have been provided below.</i></p>
+
+### adminChangeActiveCoupon
+
+
+```
+{
+  "input": {
+    "couponCode": "LOYAL10",
+    "purchasesRequired": 5,
+    "dollarAmount": 10
+  }
+}
+```
+
+### adminCreateProduct
+
+```
+{
+  "input": {
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "name": "USB-C Charging Cable",
+    "price": 5.99,
+    "stockQuantity": 20
+  }
+}
+```
+
+### adminDeleteProduct
+
+
+```
+{
+  "productId": "1"
+}
+```
+
+### adminUpdateProduct
+
+```
+{
+  "input": {
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.",
+    "id": "1",
+    "stockQuantity": 22
+  }
+}
+```

@@ -4,7 +4,7 @@ import { DataSource } from "typeorm";
 // int dependencies
 import { entities } from "../models";
 
-export const MySQLDataSource = new DataSource({
+export const mySQLDataSource = new DataSource({
     type: "mysql",
     host: process.env.DB_HOST,
     port: 3306,

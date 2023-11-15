@@ -20,9 +20,9 @@ export const typeDefs = gql`
         "Allows a customer to purchase their items"
         checkout(input: CheckoutInput!): Order!
         "Allows an admin to update product information in the product catalog"
-        adminUpdateProduct(input: ProductInput!): Product!
+        adminUpdateProduct(input: UpdateProductInput!): Product!
         "Allows an admin to create a new product"
-        adminCreateProduct(input: ProductInput!): Product!
+        adminCreateProduct(input: CreateProductInput!): Product!
         "Allows an admin to soft delete a product from their product catalog"
         adminDeleteProduct(productId: ID!): Product!
         "Allows an admin to create a new active coupon and will effect only future customer coupons"
@@ -93,9 +93,10 @@ export const typeDefs = gql`
     type Coupon {
         id: ID!
         couponCode: String!
+        purchasesRequired: Int!
         dollarAmount: Int
         discountPercentage: Int
-        maxValue: Int
+        maxDollarValue: Int
         active: Boolean!
     }
 
@@ -162,18 +163,26 @@ export const typeDefs = gql`
         token: String!
     }
 
-    input ProductInput {
-        id: ID
+    input CreateProductInput {
         name: String!
         description: String!
         price: Float!
         stockQuantity: Int!
     }
 
+    input UpdateProductInput {
+        id: ID!
+        name: String
+        description: String
+        price: Float
+        stockQuantity: Int
+    }
+
     input AdminChangeActiveCouponInput {
         couponCode: String!
+        purchasesRequired: Int!
         dollarAmount: Int
         discountPercentage: Int
-        maxValue: Int
+        maxDollarValue: Int
     }
 `;

@@ -4,14 +4,14 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
 // int dependencies
-import { typeDefs } from "./schemas";
-import { MySQLDataSource } from "./database/connection";
+import { typeDefs, resolvers } from "./schemas";
+import { mySQLDataSource } from "./database/connection";
 
 async function startApolloServer() {
     const server = new ApolloServer({ 
-        schema: makeExecutableSchema({ typeDefs }),
+        schema: makeExecutableSchema({ typeDefs, resolvers }),
     });
-    await MySQLDataSource.initialize()
+    await mySQLDataSource.initialize()
     .then(async () => {
             const { url } = await startStandaloneServer(server);
             console.log(`Use GraphQL at ${url}`);
