@@ -2,6 +2,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import {
     IsBoolean,
+    IsInt,
     IsNumber,
     IsPositive,
     IsString,
@@ -18,6 +19,11 @@ export class Coupon {
     @IsString()
     @MinLength(5)
     couponCode: string;
+
+    @Column({ type: "int" })
+    @IsPositive()
+    @IsInt()
+    purchasesRequired: number;
 
     @Column({ type: "float", nullable: true })
     @IsPositive()

@@ -43,6 +43,7 @@ export class InitializeTable1700023581168 implements MigrationInterface {
             CREATE TABLE coupons (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 couponCode VARCHAR(255) NOT NULL,
+                purchasesRequired INT NOT NULL,
                 dollarAmount INT NULL,
                 discountPercentage INT NULL,
                 maxDollarValue INT NULL,
