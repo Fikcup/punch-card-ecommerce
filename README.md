@@ -55,6 +55,22 @@ npm install
 ```
 * Use `.env.example` file to create your own `.env` file with relevant credentials
 
+<p><i>Note: Keep salt rounds consistent to allow seeded admin and customer logins to function as expected</i></p>
+
+```
+Admin User--
+username: admin_user
+password: admin_password
+
+John Doe--
+username: customer1
+password: customer_password1
+
+Jane Doe--
+username: customer2
+password: customer_password2
+```
+
 ### Database Initialization
 
 <p>Prerequisites:</p>
