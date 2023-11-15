@@ -10,12 +10,12 @@ export class Order {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ type: "int" })
     @IsPositive()
     @IsInt()
     userId: number;
 
-    @Column()
+    @Column({ type: "datetime" })
     @IsDate()
     orderDate: Date;
 

@@ -21,22 +21,22 @@ export class User {
     })
     type: UserType;
 
-    @Column({ unique: true })
+    @Column({ type: "varchar", length: 255, unique: true })
     @MinLength(5)
     username: string;
 
-    @Column({ unique: true })
+    @Column({ type: "varchar", length: 255, unique: true })
     @IsEmail()
     email: string;
 
-    @Column({ select: false })
+    @Column({ type: "varchar", length: 255, select: false })
     @MinLength(8)
     password: string;
 
-    @Column()
+    @Column({ type: "varchar", length: 255 })
     firstName: string;
 
-    @Column()
+    @Column({ type: "varchar", length: 255 })
     lastName: string;
 
     @OneToMany(() => Order, (order) => order.userId)

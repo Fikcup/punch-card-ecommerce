@@ -7,17 +7,17 @@ export class Product {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ type: "varchar", length: 255 })
     name: string;
 
-    @Column()
+    @Column({ type: "varchar", length: 255 })
     description: string;
 
-    @Column()
+    @Column({ type: "float" })
     @IsPositive()
     price: number;
 
-    @Column()
+    @Column({ type: "int" })
     @IsPositive()
     stockQuantity: number;
 

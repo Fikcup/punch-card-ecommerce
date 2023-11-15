@@ -12,20 +12,20 @@ export class Invoice {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ type: "int" })
     @IsPositive()
     @IsInt()
     orderId: number;
 
-    @Column()
+    @Column({ type: "datetime" })
     @IsDate()
     paymentDate: Date;
 
-    @Column()
+    @Column({ type: "varchar", length: 255 })
     @IsString()
     paymentToken: string;
 
-    @Column()
+    @Column({ type: "float" })
     @IsNumber()
     @IsPositive()
     subTotal: number;

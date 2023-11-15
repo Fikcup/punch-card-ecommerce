@@ -41,41 +41,36 @@ Ecommerce store where an admin can set a coupon to automatically distribute to a
    * Smaller Goal: Buy Now Button 
 * Checkout View
 
-## Database
+## Local Setup
 
-### User
-Attributes: UserID (Primary Key), Type(admin, customer), Username, Password, Email, FirstName, LastName, Timestamps.
+### Dependencies & Environment
 
-### Product
-Attributes: ProductID (Primary Key), Name, Description, Price, StockQuantity, Timestamps.
+* Install required dependencies
 
-### Order
-Attributes: OrderID (Primary Key), UserID (Foreign Key), OrderDate.
+<p><i>Note: NVM is not required, but is recommended in order keep dependencies working as expected</i></p>
 
-### OrderItem
-Attributes: OrderItemID (Primary Key), OrderID (Foreign Key), ProductID (Foreign Key), Quantity, Subtotal.
-
-### OrderCoupon
-Attributes: OrderCouponID (Primary Key), OrderID (Foreign Key), CouponID (Foreign Key).
-
-### Coupon
-Attributes: CouponID (Primary Key), UserID (Foreign Key), CouponCode, DollarAmount, DiscountPercentage, MaxValue, Active.
-
-### CustomerCoupon
-Attributes: OrderID (Primary Key), UserID (Foreign Key), Used.
-
-### Invoice
-Attributes: InvoiceID (Primary Key), OrderID (Foreign Key), PaymentDate, PaymentToken, Amount, Status.
-
-## Setup
+```
+nvm use
+npm install
+```
+* Use `.env.example` file to create your own `.env` file with relevant credentials
 
 ### Database Initialization
 
-Prerequisites
+<p>Prerequisites:</p>
+
 * MySQL is installed
 * MySQL server is running
 
-Run below SQL query to initialize the punchcard database.
+
+<p>Instructions:</p>
+
+* Run SQL query to initialize the punchcard database.
 ```
 CREATE DATABASE IF NOT EXISTS punchcard;
+```
+
+* Run migrations to initialize and seed the punchcard database.
+```
+npm run migrate:run:dev
 ```

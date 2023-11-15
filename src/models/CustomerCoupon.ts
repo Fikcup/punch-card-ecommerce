@@ -10,12 +10,12 @@ export class CustomerCoupon {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ type: "int" })
     @IsPositive()
     @IsInt()
     orderId: number;
 
-    @Column()
+    @Column({ type: "int" })
     @IsPositive()
     @IsInt()
     couponId: number;
@@ -24,7 +24,7 @@ export class CustomerCoupon {
     @JoinColumn()
     coupon: Coupon;
 
-    @Column()
+    @Column({ type: "tinyint", default: 0 })
     @IsBoolean()
     used: boolean;
 }

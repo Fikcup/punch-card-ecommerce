@@ -13,12 +13,12 @@ export class OrderItem {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ type: "int" })
     @IsPositive()
     @IsInt()
     orderId: number;
 
-    @Column()
+    @Column({ type: "int" })
     @IsPositive()
     @IsInt()
     productId: number;
@@ -27,12 +27,12 @@ export class OrderItem {
     @JoinColumn()
     product: Product;
 
-    @Column()
+    @Column({ type: "int" })
     @IsPositive()
     @IsInt()
     quantity: number;
 
-    @Column()
+    @Column({ type: "float" })
     @IsPositive()
     subTotal: number;
 }
