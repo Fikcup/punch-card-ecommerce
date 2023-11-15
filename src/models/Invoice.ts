@@ -4,7 +4,7 @@ import { IsDate, IsInt, IsNumber, IsPositive, IsString } from 'class-validator';
 
 export enum InvoiceStatus {
     Paid = "PAID",
-    Unpaid = "UNPAID"
+    Unpaid = "REFUNDED"
 };
 
 @Entity("invoices")
@@ -34,5 +34,5 @@ export class Invoice {
         type: 'enum',
         enum: InvoiceStatus
     })
-    invoiceStatus: InvoiceStatus;
+    status: InvoiceStatus;
 }

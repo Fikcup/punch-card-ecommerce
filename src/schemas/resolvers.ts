@@ -4,6 +4,7 @@ import { createProduct } from "../services/products/create";
 import { softDeleteProduct } from "../services/products/delete";
 import { getProductCatalog } from "../services/products/query";
 import { updateProduct } from "../services/products/update";
+import { getStoreOverview } from "../services/store/query";
 import { couponTransformer } from "../transformers/coupon";
 import { productTransformer, productArrayTransformer } from "../transformers/product";
 
@@ -20,10 +21,7 @@ export const resolvers = {
             return productArrayTransformer(productCatalog);
         },
         async getStoreOverview() {
-            // TODO: validate input
-            // TODO: call methods
-            // TODO: transform data to match gql types
-            // TODO: return data
+            return await getStoreOverview();
         },
         async validateToken() {
             // TODO: validate input

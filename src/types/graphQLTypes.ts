@@ -15,3 +15,9 @@ export type GQLProduct = {
     price: number;
     stockQuantity: number;
 };
+
+export type GQLStoreOverview = {
+    totalPurchases: number;
+    totalDiscountsIssued: number;
+    totalDiscountsRedeemed: number;
+};

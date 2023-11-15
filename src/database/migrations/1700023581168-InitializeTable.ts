@@ -36,6 +36,7 @@ export class InitializeTable1700023581168 implements MigrationInterface {
                 paymentDate DATETIME NOT NULL,
                 paymentToken VARCHAR(255) NOT NULL,
                 subTotal FLOAT NOT NULL,
+                status ENUM('PAID', 'REFUNDED') NOT NULL DEFAULT 'PAID',
                 FOREIGN KEY (orderId) REFERENCES orders(id)
             );
         `);
