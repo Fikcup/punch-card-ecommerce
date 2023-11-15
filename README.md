@@ -41,28 +41,52 @@ Ecommerce store where an admin can set a coupon to automatically distribute to a
    * Smaller Goal: Buy Now Button 
 * Checkout View
 
-## Database
+## Local Setup
 
-### User
-Attributes: UserID (Primary Key), Type(admin, customer), Username, Password, Email, FirstName, LastName, Timestamps.
+### Dependencies & Environment
 
-### Product
-Attributes: ProductID (Primary Key), Name, Description, Price, StockQuantity, Timestamps.
+* Install required dependencies
 
-### Order
-Attributes: OrderID (Primary Key), UserID (Foreign Key), OrderDate.
+<p><i>Note: NVM is not required, but is recommended in order keep dependencies working as expected</i></p>
 
-### OrderItem
-Attributes: OrderItemID (Primary Key), OrderID (Foreign Key), ProductID (Foreign Key), Quantity, Subtotal.
+```
+nvm use
+npm install
+```
+* Use `.env.example` file to create your own `.env` file with relevant credentials
 
-### OrderCoupon
-Attributes: OrderCouponID (Primary Key), OrderID (Foreign Key), CouponID (Foreign Key).
+<p><i>Note: Keep salt rounds consistent to allow seeded admin and customer logins to function as expected</i></p>
 
-### Coupon
-Attributes: CouponID (Primary Key), UserID (Foreign Key), CouponCode, DollarAmount, DiscountPercentage, MaxValue, Active.
+```
+Admin User--
+username: admin_user
+password: admin_password
 
-### CustomerCoupon
-Attributes: OrderID (Primary Key), UserID (Foreign Key), Used.
+John Doe--
+username: customer1
+password: customer_password1
 
-### Invoice
-Attributes: InvoiceID (Primary Key), OrderID (Foreign Key), PaymentDate, PaymentToken, Amount, Status.
+Jane Doe--
+username: customer2
+password: customer_password2
+```
+
+### Database Initialization
+
+<p>Prerequisites:</p>
+
+* MySQL is installed
+* MySQL server is running
+
+
+<p>Instructions:</p>
+
+* Run SQL query to initialize the punchcard database.
+```
+CREATE DATABASE IF NOT EXISTS punchcard;
+```
+
+* Run migrations to initialize and seed the punchcard database.
+```
+npm run migrate:run:dev
+```

@@ -11,9 +11,9 @@ async function startApolloServer() {
     const server = new ApolloServer({ 
         schema: makeExecutableSchema({ typeDefs }),
     });
-    const { url } = await startStandaloneServer(server);
     await MySQLDataSource.initialize()
-        .then(() => {
+    .then(async () => {
+            const { url } = await startStandaloneServer(server);
             console.log(`Use GraphQL at ${url}`);
         })
         .catch((err) => {
