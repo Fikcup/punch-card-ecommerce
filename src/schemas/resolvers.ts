@@ -53,7 +53,7 @@ export const resolvers = {
                 token: context.req.headers.authorization,
                 ...input
             };
-            const order = await checkoutOrder(checkoutInput);
+            const order = await checkoutOrder(checkoutInput)
             return orderTransformer(order);
         },
         async adminUpdateProduct(_, { input }) {

@@ -10,9 +10,6 @@ import { Product } from "../../models/Product";
 import { Invoice, InvoiceStatus } from "../../models/Invoice";
 import { calculateSubtotal, generateRandomPaymentToken } from "../invoices/create";
 
-const ordersRepo = (() => {
-    return mySQLDataSource.getRepository(Order);
-})();
 
 /**
  * Creates an order, respective order items, order coupons, and invoice
@@ -29,7 +26,11 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
     throw new Error("At least one item is required to checkout");
   }
 
+  // extract userId from token
   const userId = verifyToken(token).decoded.userId;
+
+  // order id scoping
+  let orderId: number;
 
   // establishes query runner
   const queryRunner = mySQLDataSource.createQueryRunner();
@@ -44,6 +45,7 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
       userId,
       orderDate: new Date(),
     });
+    orderId = order.generatedMaps[0].id;
 
     // fetch products to be used
     const productIdsArray = items.map((obj) => Number(obj.id));
@@ -62,7 +64,7 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
             queryRunner.manager.save(
                 OrderItem, 
                 {
-                    orderId: order.generatedMaps[0].id,
+                    orderId: orderId,
                     productId: product.id,
                     quantity: product.quantity,
                     subtotal: product.price
@@ -88,15 +90,15 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
       // verify customer has been issued coupon associated with coupon code
       const customerCoupons = await queryRunner.manager
         .createQueryBuilder(CustomerCoupon, "customercoupons")
-        .where("customercoupons.customerId = :customerId", {
-          customerId: userId,
-        })
         .innerJoinAndSelect(
           "customercoupons.coupon",
           "coupons",
-          "coupons.couponCode IN :couponCodesArray",
+          "coupons.couponCode IN (:...couponCodesArray)",
           { couponCodesArray: couponCodes }
         )
+        .where("customercoupons.customerId = :customerId", {
+          customerId: userId,
+        })
         .getMany();
 
       // create order coupons for each applied coupon
@@ -104,7 +106,7 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
       for (let customerCoupon of customerCoupons) {
         orderCouponPromises.push(
           queryRunner.manager.save(OrderCoupon, {
-            orderId: order.generatedMaps[0].id,
+            orderId: orderId,
             customerCouponId: customerCoupon.id,
           })
         );
@@ -133,7 +135,7 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
       await queryRunner.manager.insert(
         Invoice,
         {
-            orderId: order.generatedMaps[0].id,
+            orderId: orderId,
             paymentDate: new Date(),
             paymentToken,
             subTotal,
@@ -151,7 +153,7 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
       await queryRunner.manager.insert(
         Invoice,
         {
-            orderId: order.generatedMaps[0].id,
+            orderId: orderId,
             paymentDate: new Date(),
             paymentToken,
             subTotal,
@@ -159,26 +161,32 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
         }
       );
     }
-
     await queryRunner.commitTransaction();
 
-    return await ordersRepo
-        .createQueryBuilder("orders")
-        .where("id = :orderId", {
-            orderId: order.generatedMaps[0].id
-        })
-        .innerJoinAndSelect("orders.invoice", "invoices")
-        .innerJoinAndSelect("orders.items", "items")
-        .innerJoinAndSelect("items.product", "product")
-        .getOneOrFail();
+    // releases queryRunner transaction
+    await queryRunner.release();
+
   } catch (err) {
     // rollbacks if any failures occur
     await queryRunner.rollbackTransaction();
-    throw new Error(err);
-  } finally {
+
     // releases queryRunner transaction
     await queryRunner.release();
+
+    throw new Error(err);
   }
+
+  const order = await mySQLDataSource.getRepository(Order)
+      .createQueryBuilder("orders")
+      .where("orders.id = :id", {
+        id: orderId
+      })
+      .innerJoinAndSelect(Invoice, "invoice", "invoice.orderId = orders.id")
+      .innerJoinAndSelect(OrderItem, "items", "items.orderId = orders.id")
+      .innerJoinAndSelect(Product, "products", "products.id = items.productId")
+      .getOneOrFail();
+
+  return order;
 };
 
 // Combines checkout item ids and quantity with product catalog prices

@@ -1,10 +1,10 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { IsDate, IsInt, IsNumber, IsPositive, IsString } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from "typeorm";
+import { IsDate, IsInt, IsNumber, IsPositive, IsString } from "class-validator";
 
 export enum InvoiceStatus {
     Paid = "PAID",
-    Unpaid = "REFUNDED"
+    Refunded = "REFUNDED"
 };
 
 @Entity("invoices")
@@ -31,7 +31,7 @@ export class Invoice {
     subTotal: number;
 
     @Column({
-        type: 'enum',
+        type: "enum",
         enum: InvoiceStatus
     })
     status: InvoiceStatus;

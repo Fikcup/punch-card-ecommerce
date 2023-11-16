@@ -20,8 +20,8 @@ export const orderTransformer = (
         id: String(id),
         userId: String(userId),
         orderDate: orderDate.toDateString(),
-        invoice: invoiceTransformer(invoice),
-        items: orderItemArrayTransformer(items),
+        invoice: invoice ? invoiceTransformer(invoice) : undefined,
+        items: items ? orderItemArrayTransformer(items) : undefined,
     }
 };
 

@@ -46,6 +46,6 @@ export type GQLOrder = {
     id: string;
     userId: string;
     orderDate: string;
-    items: GQLOrderItem[];
-    invoice: GQLInvoice;
+    items?: GQLOrderItem[];
+    invoice?: GQLInvoice;
 };

@@ -25,7 +25,6 @@ export class InitializeTable1700023581168 implements MigrationInterface {
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 userId INT NOT NULL,
                 orderDate DATETIME NOT NULL,
-                invoiceId INT NOT NULL,
                 FOREIGN KEY (userId) REFERENCES users(id)
             );
         `);

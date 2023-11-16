@@ -1,9 +1,9 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany, JoinColumn } from 'typeorm';
-import { IsEmail, MinLength } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany, JoinColumn } from "typeorm";
+import { IsEmail, MinLength } from "class-validator";
 
 // int dependencies
-import { Order } from './Order';
+import { Order } from "./Order";
 
 export enum UserType {
     Admin = "ADMIN",
@@ -16,7 +16,7 @@ export class User {
     id: number;
 
     @Column({
-        type: 'enum',
+        type: "enum",
         enum: UserType
     })
     type: UserType;

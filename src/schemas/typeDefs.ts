@@ -113,8 +113,8 @@ export const typeDefs = gql`
         id: ID!
         userId: ID!
         orderDate: String!
-        items: [OrderItem!]!
-        invoice: Invoice!
+        items: [OrderItem!]
+        invoice: Invoice
     }
 
     "An order item is an individual item sold on an order"

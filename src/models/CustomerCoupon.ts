@@ -1,9 +1,9 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
-import { IsBoolean, IsInt, IsPositive } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from "typeorm";
+import { IsBoolean, IsInt, IsPositive } from "class-validator";
 
 // int dependencies
-import { Coupon } from './Coupon';
+import { Coupon } from "./Coupon";
 
 @Entity("customercoupons")
 export class CustomerCoupon {  
