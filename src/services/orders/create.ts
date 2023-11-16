@@ -67,18 +67,25 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
     const productAndQuantityArray = combineQuantityAndPriceArrays(
         items, products
     );
+
+    // save order items
+    const orderItems: OrderItem[] = [];
+    
     const orderItemPromises: Promise<any>[] = [];
     for (let product of productAndQuantityArray) {
+        const subTotal = product.price * product.quantity;
+        const orderItem = queryRunner.manager.create(
+          OrderItem, 
+          {
+              orderId: orderId,
+              productId: product.id,
+              quantity: product.quantity,
+              subTotal: subTotal,
+          }
+        );
+        orderItems.push(orderItem);
         orderItemPromises.push(
-            queryRunner.manager.save(
-                OrderItem, 
-                {
-                    orderId: orderId,
-                    productId: product.id,
-                    quantity: product.quantity,
-                    subtotal: product.price
-                }
-            )
+            queryRunner.manager.save(orderItem)
         );
         orderItemPromises.push(
           queryRunner.manager.update(
@@ -108,14 +115,28 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
         .where("customercoupons.customerId = :customerId", {
           customerId: userId,
         })
+        .andWhere("customercoupons.used = :usedValue", {
+          usedValue: false,
+        })
         .getMany();
+
+      if (couponCodes.length !== customerCoupons.length) {
+        // filters for invalid coupon codes
+        const couponCodesFetched = customerCoupons.map(
+          obj => obj.coupon.couponCode
+        );
+        const unmatchedCodes = couponCodes.filter(
+          value => !couponCodesFetched.includes(value)
+        );
+
+        throw new Error(
+          `One or more coupons is invalid for the customer: ${unmatchedCodes}`
+        );
+      }
 
       // create order coupons for each applied coupon
       const orderCouponPromises: Promise<any>[] = [];
       for (let customerCoupon of customerCoupons) {
-        if (customerCoupon.used) {
-          throw new Error (`Customer coupon ID ${customerCoupon.id} with code ${customerCoupon.coupon.couponCode} has already been reedemed`);
-        }
         orderCouponPromises.push(
           queryRunner.manager.save(OrderCoupon, {
             orderId: orderId,
@@ -138,7 +159,7 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
       const coupons = customerCoupons.map((cc) => cc.coupon);
 
       // calculate subtotal
-      const subTotal = calculateSubtotal(products, coupons);
+      const subTotal = calculateSubtotal(orderItems, coupons);
 
       // NOTE: paymentToken is intended to be an external field with a transaction id from a payment processor. For the purposes of this project, this field is randomly generated
       const paymentToken = generateRandomPaymentToken();
@@ -156,7 +177,7 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
       );
     } else {
       // if customer has no coupons calculate subtotal
-      const subTotal = calculateSubtotal(products, []);
+      const subTotal = calculateSubtotal(orderItems, []);
 
       // NOTE: paymentToken is intended to be an external field with a transaction id from a payment processor. For the purposes of this project, this field is randomly generated
       const paymentToken = generateRandomPaymentToken();
@@ -185,11 +206,24 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
       });
 
     // issues coupon if user has reached number of purchases required
-    if (user.purchasesSinceLastCoupon >= activeCoupon.purchasesRequired) {
+    if ((user.purchasesSinceLastCoupon + 1) >= activeCoupon.purchasesRequired) {
       await queryRunner.manager.getRepository(CustomerCoupon).insert({
         customerId: userId,
         couponId: activeCoupon.id,
       });
+      
+      // reset purchasesSinceLastCoupon to 0
+      await queryRunner.manager.getRepository(User).update(
+        { id: userId },
+        { purchasesSinceLastCoupon: 0 }
+      );
+    } else {
+      // add to purchasesSinceLastCoupon value
+      const newTotalPurchases = user.purchasesSinceLastCoupon + 1;
+      await queryRunner.manager.getRepository(User).update(
+        { id: userId },
+        { purchasesSinceLastCoupon: newTotalPurchases }
+      );
     }
 
     await queryRunner.commitTransaction();

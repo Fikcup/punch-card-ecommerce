@@ -23,8 +23,10 @@ Ecommerce store where an admin can set a coupon to automatically distribute to a
 
 ### Server Startup
 
+<p><i>Note: npm start will fail due to unloaded environment variables. Please use local command to load .env resources.</i><p>
+
 ```
-npm run dev
+npm run local
 ```
 
 <p>Open localhost link to launch Apollo Studio.</p>
