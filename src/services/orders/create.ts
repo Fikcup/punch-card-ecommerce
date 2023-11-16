@@ -1,14 +1,14 @@
 // int dependencies
 import { mySQLDataSource } from "../../database/connection";
+import { CheckoutInput, CheckoutItems } from "../../types/inputs/order";
+import { verifyToken } from "../../utils/token";
 import { CustomerCoupon } from "../../models/CustomerCoupon";
 import { Order } from "../../models/Order";
 import { OrderCoupon } from "../../models/OrderCoupon";
-import { CheckoutInput, CheckoutItems } from "../../types/inputs/order";
-import { verifyToken } from "../../utils/token";
 import { OrderItem } from "../../models/OrderItem";
 import { Product } from "../../models/Product";
-import { calculateSubtotal, generateRandomPaymentToken } from "../invoices/create";
 import { Invoice, InvoiceStatus } from "../../models/Invoice";
+import { calculateSubtotal, generateRandomPaymentToken } from "../invoices/create";
 
 const ordersRepo = (() => {
     return mySQLDataSource.getRepository(Order);

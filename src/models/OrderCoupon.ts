@@ -1,5 +1,5 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne } from 'typeorm';
 import { IsInt, IsPositive } from 'class-validator';
 
 // int dependencies
@@ -20,7 +20,7 @@ export class OrderCoupon {
     @IsInt()
     customerCouponId: number;
 
-    @ManyToMany(
+    @OneToOne(
         () => CustomerCoupon, 
         (customerCoupon: CustomerCoupon) => customerCoupon.id
     )
