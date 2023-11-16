@@ -1,12 +1,12 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import {
     IsPositive,
     IsInt,
-} from 'class-validator';
+} from "class-validator";
 
 // int dependencies
-import { Product } from './Product';
+import { Product } from "./Product";
 
 @Entity("orderitems")
 export class OrderItem {  

@@ -13,6 +13,7 @@ export class InitializeTable1700023581168 implements MigrationInterface {
                 email VARCHAR(255) NOT NULL,
                 firstName VARCHAR(255) NOT NULL,
                 lastName VARCHAR(255) NOT NULL,
+                purchasesSinceLastCoupon INT NOT NULL DEFAULT 0,
                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                 updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
                 deletedAt TIMESTAMP NULL,
@@ -25,7 +26,6 @@ export class InitializeTable1700023581168 implements MigrationInterface {
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 userId INT NOT NULL,
                 orderDate DATETIME NOT NULL,
-                invoiceId INT NOT NULL,
                 FOREIGN KEY (userId) REFERENCES users(id)
             );
         `);
@@ -55,10 +55,10 @@ export class InitializeTable1700023581168 implements MigrationInterface {
         await queryRunner.query(`
             CREATE TABLE customercoupons (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-                orderId INT NOT NULL,
+                customerId INT NOT NULL,
                 couponId INT NOT NULL,
                 used TINYINT(1) NOT NULL DEFAULT 0,
-                FOREIGN KEY (orderId) REFERENCES orders(id),
+                FOREIGN KEY (customerId) references users(id),
                 FOREIGN KEY (couponId) REFERENCES coupons(id)
             );
         `);
@@ -66,9 +66,9 @@ export class InitializeTable1700023581168 implements MigrationInterface {
             CREATE TABLE ordercoupons (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 orderId INT NOT NULL,
-                couponId INT NOT NULL,
+                customerCouponId INT NOT NULL,
                 FOREIGN KEY (orderId) REFERENCES orders(id),
-                FOREIGN KEY (couponId) REFERENCES coupons(id)
+                FOREIGN KEY (customerCouponId) REFERENCES customercoupons(id)
             );
         `);
         await queryRunner.query(`

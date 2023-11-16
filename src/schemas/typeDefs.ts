@@ -8,6 +8,8 @@ export const typeDefs = gql`
         getCatalog: [Product!]!
         "Store metrics for total purchases made, discounts issued, and discounts used"
         getStoreOverview: StoreOverview!
+        "Returns all coupons the customer has access to based on their authorization token. Please use example token provided in the README"
+        getOwnCoupons: [Coupon!]!
         "Checks that a token is valid and belongs to a user"
         validateToken(token: String!): User
     }
@@ -113,8 +115,8 @@ export const typeDefs = gql`
         id: ID!
         userId: ID!
         orderDate: String!
-        items: [OrderItem!]!
-        invoice: Invoice!
+        items: [OrderItem!]
+        invoice: Invoice
     }
 
     "An order item is an individual item sold on an order"
@@ -144,6 +146,12 @@ export const typeDefs = gql`
         status: InvoiceStatus!
     }
 
+    "A checkout item is the item information needed for the checkout flow"
+    input CheckoutItem {
+        id: ID!
+        quantity: Int!
+    }
+
     input CustomerSignUpInput {
         username: String!
         password: String!
@@ -158,9 +166,8 @@ export const typeDefs = gql`
     }
 
     input CheckoutInput {
-        itemIds: [ID!]!
+        items: [CheckoutItem!]!
         couponCodes: [String!]!
-        token: String!
     }
 
     input CreateProductInput {

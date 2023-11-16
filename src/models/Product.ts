@@ -1,6 +1,7 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
-import { IsPositive } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { IsPositive } from "class-validator";
+import { OrderItem } from "./OrderItem";
 
 @Entity("products")
 export class Product {  
@@ -20,6 +21,10 @@ export class Product {
     @Column({ type: "int" })
     @IsPositive()
     stockQuantity: number;
+
+    @OneToMany(() => OrderItem, (item) => item.product.id)
+    @JoinColumn()
+    productOrderItems: OrderItem[];
 
     @CreateDateColumn({ name: "CreatedAt", type: "timestamp", nullable: false })
     createdAt!: Date;

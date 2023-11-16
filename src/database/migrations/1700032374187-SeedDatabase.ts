@@ -14,6 +14,17 @@ export class SeedDatabase1700032374187 implements MigrationInterface {
             INSERT INTO coupons (couponCode, dollarAmount, discountPercentage, maxDollarValue, active) 
             VALUES ('ABCDE', 10.00, NULL, NULL, 1);
         `);
+        await queryRunner.query(`
+            INSERT INTO customercoupons (customerId, couponId, used) 
+            VALUES (2, 1, 0), 
+            (3, 1, 0);
+        `);
+        await queryRunner.query(`
+            INSERT INTO products (name, description, price, stockQuantity)
+            VALUES ('Product1', 'Description for Product1', 19.99, 100),
+            ('Product2', 'Description for Product2', 29.99, 150),
+            ('Product3', 'Description for Product3', 39.99, 200);
+        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
@@ -22,6 +33,12 @@ export class SeedDatabase1700032374187 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DELETE FROM coupons WHERE couponCode = 'ABCDE';
+        `);
+        await queryRunner.query(`
+            DELETE FROM customercoupons WHERE customerId IN (2, 3);
+        `);
+        await queryRunner.query(`
+            DELETE from products WHERE name IN ('Product1', 'Product2', 'Product3');
         `);
     }
 

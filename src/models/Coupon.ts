@@ -1,5 +1,5 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 import {
     IsBoolean,
     IsInt,
@@ -8,7 +8,7 @@ import {
     IsString,
     Min,
     MinLength,
-} from 'class-validator';
+} from "class-validator";
 
 @Entity("coupons")
 export class Coupon {  

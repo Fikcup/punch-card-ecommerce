@@ -33,7 +33,7 @@ export const issueNewActiveCoupon = async (
         );
 
         // creates new active coupon
-        await queryRunner.manager.save(
+        await queryRunner.manager.insert(
             Coupon,
             { 
                 couponCode, 

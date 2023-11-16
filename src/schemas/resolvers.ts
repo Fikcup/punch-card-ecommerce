@@ -1,12 +1,16 @@
 // int dependencies
 import { issueNewActiveCoupon } from "../services/coupons/create"
+import { fetchOwnCoupons } from "../services/coupons/query";
+import { checkoutOrder } from "../services/orders/create";
 import { createProduct } from "../services/products/create";
 import { softDeleteProduct } from "../services/products/delete";
 import { getProductCatalog } from "../services/products/query";
 import { updateProduct } from "../services/products/update";
 import { getStoreOverview } from "../services/store/query";
 import { couponTransformer } from "../transformers/coupon";
+import { orderTransformer } from "../transformers/order";
 import { productTransformer, productArrayTransformer } from "../transformers/product";
+import { CheckoutInput } from "../types/inputs/order";
 
 export const resolvers = {
     Query: {
@@ -22,6 +26,11 @@ export const resolvers = {
         },
         async getStoreOverview() {
             return await getStoreOverview();
+        },
+        async getOwnCoupons(_, __, context) {
+            const token = context.req.headers.authorization;
+            if (!token) throw new Error('No token provided!');
+            return await fetchOwnCoupons(token);
         },
         async validateToken() {
             // TODO: validate input
@@ -44,11 +53,17 @@ export const resolvers = {
             // TODO: transform data to match gql types
             // TODO: return data
         },
-        async checkout() {
+        async checkout(_, { input }, context) {
             // TODO: validate input
-            // TODO: call methods
-            // TODO: transform data to match gql types
-            // TODO: return data
+            const token = context.req.headers.authorization;
+            if (!token) throw new Error('No token provided!');
+
+            const checkoutInput: CheckoutInput = {
+                token,
+                ...input
+            };
+            const order = await checkoutOrder(checkoutInput)
+            return orderTransformer(order);
         },
         async adminUpdateProduct(_, { input }) {
             // TODO: validate input

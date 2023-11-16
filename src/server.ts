@@ -13,7 +13,9 @@ async function startApolloServer() {
     });
     await mySQLDataSource.initialize()
     .then(async () => {
-            const { url } = await startStandaloneServer(server);
+            const { url } = await startStandaloneServer(server, {
+                context: async ({ req }) => ({ req }),
+            });
             console.log(`Use GraphQL at ${url}`);
         })
         .catch((err) => {
