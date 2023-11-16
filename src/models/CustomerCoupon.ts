@@ -13,7 +13,7 @@ export class CustomerCoupon {
     @Column({ type: "int" })
     @IsPositive()
     @IsInt()
-    orderId: number;
+    customerId: number;
 
     @Column({ type: "int" })
     @IsPositive()

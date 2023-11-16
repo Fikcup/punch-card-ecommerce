@@ -71,6 +71,12 @@ username: customer2
 password: customer_password2
 ```
 
+<p>Example Token for Customer1:</p>
+
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlcklkIjoyLCJlbWFpbCI6ImN1c3RvbWVyMUBleGFtcGxlLmNvbSJ9.7fmPqv0naJ5zz4Tm6ezASDU1X6EBh1Axjj8sJBYZKzg
+```
+
 ### Database Initialization
 
 <p>Prerequisites:</p>
@@ -94,6 +100,24 @@ npm run migrate:run:dev
 ## Queries & Mutations
 
 <p><i>Note: When you initialize the server, if you open the relevant port, it will open Apollo Studio. This will give you access to all available queries and mutations as well as the documentation. Example inputs have been provided below.</i></p>
+
+### checkout
+
+<p><i>Note: Input will only work if your token is from a customer who has been issued the coupon "ABCDE"</i></p>
+
+```
+{
+  "input": {
+    "couponCodes": "ABCDE",
+    "items": [
+      {
+        "id": "2",
+        "quantity": 3
+      }
+    ]
+  }
+}
+```
 
 ### adminChangeActiveCoupon
 

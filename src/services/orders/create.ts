@@ -1,0 +1,217 @@
+// int dependencies
+import { mySQLDataSource } from "../../database/connection";
+import { CustomerCoupon } from "../../models/CustomerCoupon";
+import { Order } from "../../models/Order";
+import { OrderCoupon } from "../../models/OrderCoupon";
+import { CheckoutInput, CheckoutItems } from "../../types/inputs/order";
+import { verifyToken } from "../../utils/token";
+import { OrderItem } from "../../models/OrderItem";
+import { Product } from "../../models/Product";
+import { calculateSubtotal, generateRandomPaymentToken } from "../invoices/create";
+import { Invoice, InvoiceStatus } from "../../models/Invoice";
+
+const ordersRepo = (() => {
+    return mySQLDataSource.getRepository(Order);
+})();
+
+/**
+ * Creates an order, respective order items, order coupons, and invoice
+ * 
+ * Note: logic cannot be extracted to seperate files due to QueryRunner transaction limitations
+ * 
+ * @param input order input specifying what items and coupons are to be used to create an order and process payment
+ * @returns Order with completed fields
+ */
+export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
+  const { items, couponCodes, token } = input;
+
+  if (items.length === 0) {
+    throw new Error("At least one item is required to checkout");
+  }
+
+  const userId = verifyToken(token).decoded.userId;
+
+  // establishes query runner
+  const queryRunner = mySQLDataSource.createQueryRunner();
+  await queryRunner.connect();
+
+  // starts transaction
+  await queryRunner.startTransaction();
+
+  try {
+    // create order
+    const order = await queryRunner.manager.insert(Order, {
+      userId,
+      orderDate: new Date(),
+    });
+
+    // fetch products to be used
+    const productIdsArray = items.map((obj) => Number(obj.id));
+    const products = await queryRunner.manager
+        .createQueryBuilder(Product, "prods")
+        .whereInIds(productIdsArray)
+        .getMany();
+
+    // create order items for each item and update stock quantity
+    const productAndQuantityArray = combineQuantityAndPriceArrays(
+        items, products
+    );
+    const orderItemPromises: Promise<any>[] = [];
+    for (let product of productAndQuantityArray) {
+        orderItemPromises.push(
+            queryRunner.manager.save(
+                OrderItem, 
+                {
+                    orderId: order.generatedMaps[0].id,
+                    productId: product.id,
+                    quantity: product.quantity,
+                    subtotal: product.price
+                }
+            )
+        );
+        orderItemPromises.push(
+          queryRunner.manager.update(
+            Product,
+            {
+              id: product.id
+            },
+            {
+              stockQuantity: (product.stockQuantity - product.quantity)
+            }
+          )
+        );
+    }
+    await Promise.all(orderItemPromises);
+
+    // if coupons are provided, find relevant coupons to apply to order
+    if (couponCodes.length > 0) {
+      // verify customer has been issued coupon associated with coupon code
+      const customerCoupons = await queryRunner.manager
+        .createQueryBuilder(CustomerCoupon, "customercoupons")
+        .where("customercoupons.customerId = :customerId", {
+          customerId: userId,
+        })
+        .innerJoinAndSelect(
+          "customercoupons.coupon",
+          "coupons",
+          "coupons.couponCode IN :couponCodesArray",
+          { couponCodesArray: couponCodes }
+        )
+        .getMany();
+
+      // create order coupons for each applied coupon
+      const orderCouponPromises: Promise<any>[] = [];
+      for (let customerCoupon of customerCoupons) {
+        orderCouponPromises.push(
+          queryRunner.manager.save(OrderCoupon, {
+            orderId: order.generatedMaps[0].id,
+            customerCouponId: customerCoupon.id,
+          })
+        );
+      }
+      await Promise.all(orderCouponPromises);
+
+      // mark customer coupons as used
+      const customerCouponIdsArray = customerCoupons.map((obj) => obj.id);
+      await queryRunner.manager
+        .createQueryBuilder()
+        .update(CustomerCoupon)
+        .set({ used: true })
+        .whereInIds(customerCouponIdsArray)
+        .execute();
+
+      // reduce customer coupons to coupon values
+      const coupons = customerCoupons.map((cc) => cc.coupon);
+
+      // calculate subtotal
+      const subTotal = calculateSubtotal(products, coupons);
+
+      // NOTE: paymentToken is intended to be an external field with a transaction id from a payment processor. For the purposes of this project, this field is randomly generated
+      const paymentToken = generateRandomPaymentToken();
+
+      // create invoice for order
+      await queryRunner.manager.insert(
+        Invoice,
+        {
+            orderId: order.generatedMaps[0].id,
+            paymentDate: new Date(),
+            paymentToken,
+            subTotal,
+            status: InvoiceStatus.Paid
+        }
+      );
+    } else {
+      // if customer has no coupons calculate subtotal
+      const subTotal = calculateSubtotal(products, []);
+
+      // NOTE: paymentToken is intended to be an external field with a transaction id from a payment processor. For the purposes of this project, this field is randomly generated
+      const paymentToken = generateRandomPaymentToken();
+
+      // create invoice for order
+      await queryRunner.manager.insert(
+        Invoice,
+        {
+            orderId: order.generatedMaps[0].id,
+            paymentDate: new Date(),
+            paymentToken,
+            subTotal,
+            status: InvoiceStatus.Paid
+        }
+      );
+    }
+
+    await queryRunner.commitTransaction();
+
+    return await ordersRepo
+        .createQueryBuilder("orders")
+        .where("id = :orderId", {
+            orderId: order.generatedMaps[0].id
+        })
+        .innerJoinAndSelect("orders.invoice", "invoices")
+        .innerJoinAndSelect("orders.items", "items")
+        .innerJoinAndSelect("items.product", "product")
+        .getOneOrFail();
+  } catch (err) {
+    // rollbacks if any failures occur
+    await queryRunner.rollbackTransaction();
+    throw new Error(err);
+  } finally {
+    // releases queryRunner transaction
+    await queryRunner.release();
+  }
+};
+
+// Combines checkout item ids and quantity with product catalog prices
+export const combineQuantityAndPriceArrays = (
+    quantity: CheckoutItems[], 
+    products: Product[]
+):{ 
+    id: number; 
+    price: number; 
+    quantity: number;
+    stockQuantity: number;
+}[] => {
+    const combinedArray: { 
+        id: number; 
+        price: number; 
+        quantity: number; 
+        stockQuantity: number;
+    }[] = quantity.map((obj1) => {
+        const matchingObj2 = products.find((obj2) => Number(obj1.id) === obj2.id);
+      
+        if (matchingObj2) {
+          return {
+            id: matchingObj2.id,
+            price: matchingObj2.price,
+            quantity: obj1.quantity,
+            stockQuantity: matchingObj2.stockQuantity,
+          };
+        }
+
+        // Removes unmatched entities
+        return null
+    }).filter(Boolean);
+
+    return combinedArray;
+}
+

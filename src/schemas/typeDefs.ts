@@ -144,6 +144,12 @@ export const typeDefs = gql`
         status: InvoiceStatus!
     }
 
+    "A checkout item is the item information needed for the checkout flow"
+    input CheckoutItem {
+        id: ID!
+        quantity: Int!
+    }
+
     input CustomerSignUpInput {
         username: String!
         password: String!
@@ -158,9 +164,8 @@ export const typeDefs = gql`
     }
 
     input CheckoutInput {
-        itemIds: [ID!]!
+        items: [CheckoutItem!]!
         couponCodes: [String!]!
-        token: String!
     }
 
     input CreateProductInput {

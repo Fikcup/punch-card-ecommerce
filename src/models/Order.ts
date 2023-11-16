@@ -1,9 +1,10 @@
 // ext dependencies
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 import { IsDate, IsInt, IsPositive } from 'class-validator';
 
 // int dependencies
 import { Invoice } from './Invoice';
+import { OrderItem } from './OrderItem';
 
 @Entity("orders")
 export class Order {  
@@ -22,4 +23,8 @@ export class Order {
     @OneToOne(() => Invoice, (invoice) => invoice.id)
     @JoinColumn()
     invoice: Invoice;
+
+    @OneToMany(() => OrderItem, (item) => item.id)
+    @JoinColumn()
+    items: OrderItem[];
 }

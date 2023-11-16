@@ -1,12 +1,15 @@
 // int dependencies
 import { issueNewActiveCoupon } from "../services/coupons/create"
+import { checkoutOrder } from "../services/orders/create";
 import { createProduct } from "../services/products/create";
 import { softDeleteProduct } from "../services/products/delete";
 import { getProductCatalog } from "../services/products/query";
 import { updateProduct } from "../services/products/update";
 import { getStoreOverview } from "../services/store/query";
 import { couponTransformer } from "../transformers/coupon";
+import { orderTransformer } from "../transformers/order";
 import { productTransformer, productArrayTransformer } from "../transformers/product";
+import { CheckoutInput } from "../types/inputs/order";
 
 export const resolvers = {
     Query: {
@@ -44,11 +47,14 @@ export const resolvers = {
             // TODO: transform data to match gql types
             // TODO: return data
         },
-        async checkout() {
+        async checkout(_, { input }, context) {
             // TODO: validate input
-            // TODO: call methods
-            // TODO: transform data to match gql types
-            // TODO: return data
+            const checkoutInput: CheckoutInput = {
+                token: context.req.headers.authorization,
+                ...input
+            };
+            const order = await checkoutOrder(checkoutInput);
+            return orderTransformer(order);
         },
         async adminUpdateProduct(_, { input }) {
             // TODO: validate input

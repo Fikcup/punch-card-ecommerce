@@ -55,10 +55,10 @@ export class InitializeTable1700023581168 implements MigrationInterface {
         await queryRunner.query(`
             CREATE TABLE customercoupons (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-                orderId INT NOT NULL,
+                customerId INT NOT NULL,
                 couponId INT NOT NULL,
                 used TINYINT(1) NOT NULL DEFAULT 0,
-                FOREIGN KEY (orderId) REFERENCES orders(id),
+                FOREIGN KEY (customerId) references users(id),
                 FOREIGN KEY (couponId) REFERENCES coupons(id)
             );
         `);
@@ -66,9 +66,9 @@ export class InitializeTable1700023581168 implements MigrationInterface {
             CREATE TABLE ordercoupons (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 orderId INT NOT NULL,
-                couponId INT NOT NULL,
+                customerCouponId INT NOT NULL,
                 FOREIGN KEY (orderId) REFERENCES orders(id),
-                FOREIGN KEY (couponId) REFERENCES coupons(id)
+                FOREIGN KEY (customerCouponId) REFERENCES customercoupons(id)
             );
         `);
         await queryRunner.query(`

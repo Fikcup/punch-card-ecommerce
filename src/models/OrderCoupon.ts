@@ -3,7 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn } from '
 import { IsInt, IsPositive } from 'class-validator';
 
 // int dependencies
-import { Coupon } from './Coupon';
+import { CustomerCoupon } from './CustomerCoupon';
 
 @Entity("ordercoupons")
 export class OrderCoupon {  
@@ -18,9 +18,12 @@ export class OrderCoupon {
     @Column({ type: "int" })
     @IsPositive()
     @IsInt()
-    couponId: number;
+    customerCouponId: number;
 
-    @ManyToMany(() => Coupon, (coupon: Coupon) => coupon.id)
+    @ManyToMany(
+        () => CustomerCoupon, 
+        (customerCoupon: CustomerCoupon) => customerCoupon.id
+    )
     @JoinColumn()
-    coupon: Coupon;
+    customerCoupon: CustomerCoupon;
 }
