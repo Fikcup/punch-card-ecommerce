@@ -13,6 +13,7 @@ Ecommerce store where an admin can set a coupon to automatically distribute to a
      * `getStoreOverview()`
 * Persisting Data
 * Input Validation
+* Automated Testing
 
 ### Assumptions
 
