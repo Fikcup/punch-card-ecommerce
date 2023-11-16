@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "### Description",
   "scripts": {
-    "dev": "ts-node -r dotenv/config ./src/server.ts",
+    "local": "ts-node -r dotenv/config ./src/server.ts",
+    "build": "tsc",
+    "start": "node ./build/server.js",
     "migrate:generate": "ts-node -r dotenv/config ./node_modules/typeorm/cli.js migration:generate -d ./src/database/connection.ts",
-    "migrate:run:dev": "ts-node -r dotenv/config ./node_modules/typeorm/cli.js migration:run -d ./src/database/connection.ts",
+    "migrate:run:local": "ts-node -r dotenv/config ./node_modules/typeorm/cli.js migration:run -d ./src/database/connection.ts",
     "migrate:run": "ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/database/connection.ts",
-    "migrate:revert:dev": "ts-node -r dotenv/config ./node_modules/typeorm/cli.js migration:revert -d ./src/database/connection.ts",
+    "migrate:revert:local": "ts-node -r dotenv/config ./node_modules/typeorm/cli.js migration:revert -d ./src/database/connection.ts",
     "migrate:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -d ./src/database/connection.ts"
   },
   "repository": {
