@@ -8,6 +8,8 @@ export const typeDefs = gql`
         getCatalog: [Product!]!
         "Store metrics for total purchases made, discounts issued, and discounts used"
         getStoreOverview: StoreOverview!
+        "Returns all coupons the customer has access to based on their authorization token. Please use example token provided in the README"
+        getOwnCoupons: [Coupon!]!
         "Checks that a token is valid and belongs to a user"
         validateToken(token: String!): User
     }
