@@ -8,6 +8,9 @@ Ecommerce store where an admin can set a coupon to automatically distribute to a
 
 * Authentication & Authorization
    * Use example token for checkout functionality
+   * As login functionality is out of scope refer to listed resolvers for expected on login functionality
+     * `getOwnCoupons()`
+     * `getStoreOverview()`
 * Persisting Data
 * Input Validation
 
