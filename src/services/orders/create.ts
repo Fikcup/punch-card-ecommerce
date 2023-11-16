@@ -54,6 +54,13 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
         .whereInIds(productIdsArray)
         .getMany();
 
+    // verify products are in stock
+    for (let product of products) {
+      if (product.stockQuantity <= 0) {
+        throw new Error(`Product of ID ${product.id} is out of stock.`);
+      }
+    }
+
     // create order items for each item and update stock quantity
     const productAndQuantityArray = combineQuantityAndPriceArrays(
         items, products
@@ -104,6 +111,9 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
       // create order coupons for each applied coupon
       const orderCouponPromises: Promise<any>[] = [];
       for (let customerCoupon of customerCoupons) {
+        if (customerCoupon.used) {
+          throw new Error (`Customer coupon ID ${customerCoupon.id} with code ${customerCoupon.coupon.couponCode} has already been reedemed`);
+        }
         orderCouponPromises.push(
           queryRunner.manager.save(OrderCoupon, {
             orderId: orderId,
@@ -176,6 +186,7 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
     throw new Error(err);
   }
 
+  // due to complications with model joins, invoice and product fields will return null
   const order = await mySQLDataSource.getRepository(Order)
       .createQueryBuilder("orders")
       .where("orders.id = :id", {
