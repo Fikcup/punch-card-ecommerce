@@ -13,6 +13,7 @@ export class InitializeTable1700023581168 implements MigrationInterface {
                 email VARCHAR(255) NOT NULL,
                 firstName VARCHAR(255) NOT NULL,
                 lastName VARCHAR(255) NOT NULL,
+                purchasesSinceLastCoupon INT NOT NULL DEFAULT 0,
                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                 updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
                 deletedAt TIMESTAMP NULL,

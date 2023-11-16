@@ -9,6 +9,8 @@ import { OrderItem } from "../../models/OrderItem";
 import { Product } from "../../models/Product";
 import { Invoice, InvoiceStatus } from "../../models/Invoice";
 import { calculateSubtotal, generateRandomPaymentToken } from "../invoices/create";
+import { Coupon } from "../../models/Coupon";
+import { User } from "../../models/User";
 
 
 /**
@@ -171,6 +173,25 @@ export const checkoutOrder = async (input: CheckoutInput): Promise<Order> => {
         }
       );
     }
+
+    // check if user reaches coupon issue amount
+    const activeCoupon = await mySQLDataSource.getRepository(Coupon)
+      .findOneByOrFail({
+        active: true
+      });
+    const user = await mySQLDataSource.getRepository(User)
+      .findOneByOrFail({
+        id: userId
+      });
+
+    // issues coupon if user has reached number of purchases required
+    if (user.purchasesSinceLastCoupon >= activeCoupon.purchasesRequired) {
+      await queryRunner.manager.getRepository(CustomerCoupon).insert({
+        customerId: userId,
+        couponId: activeCoupon.id,
+      });
+    }
+
     await queryRunner.commitTransaction();
 
     // releases queryRunner transaction

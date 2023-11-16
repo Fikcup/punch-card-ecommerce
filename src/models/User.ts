@@ -39,6 +39,9 @@ export class User {
     @Column({ type: "varchar", length: 255 })
     lastName: string;
 
+    @Column({ type: "int", default: 0 })
+    purchasesSinceLastCoupon: number;
+
     @OneToMany(() => Order, (order) => order.userId)
     @JoinColumn()
     orders: Order
