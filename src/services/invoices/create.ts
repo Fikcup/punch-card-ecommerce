@@ -1,12 +1,12 @@
 // int dependencies
 import { Coupon } from "../../models/Coupon";
-import { Product } from "../../models/Product";
+import { OrderItem } from "../../models/OrderItem";
 
 export const calculateSubtotal = (
-    items: Product[],
+    items: OrderItem[],
     coupons: Coupon[]
 ): number => {
-    const subtotal = items.reduce((total, item) => total + item.price, 0);
+    const subtotal = items.reduce((total, item) => total + item.subTotal, 0);
 
     const discountedSubtotal = coupons.reduce((acc, coupon) => {
         if (coupon.dollarAmount) {

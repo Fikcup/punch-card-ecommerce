@@ -11,8 +11,8 @@ export class SeedDatabase1700032374187 implements MigrationInterface {
             ('CUSTOMER', 'customer2', '$2a$12$7q8z4PAC1Cq5yjuDyomFA.D2Wt./S4HaqWHg6qe8XDqELrG/.1qPa', 'customer2@example.com', 'Jane', 'Smith');
         `);
         await queryRunner.query(`
-            INSERT INTO coupons (couponCode, dollarAmount, discountPercentage, maxDollarValue, active) 
-            VALUES ('ABCDE', 10.00, NULL, NULL, 1);
+            INSERT INTO coupons (couponCode, purchasesRequired, dollarAmount, discountPercentage, maxDollarValue, active) 
+            VALUES ('ABCDE', 3, 10.00, NULL, NULL, 1);
         `);
         await queryRunner.query(`
             INSERT INTO customercoupons (customerId, couponId, used) 
