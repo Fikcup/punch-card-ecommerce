@@ -60,7 +60,7 @@ CREATE DATABASE IF NOT EXISTS punchcard;
 
 * Run migrations to initialize and seed the punchcard database.
 ```
-npm run migrate:run:dev
+npm run migrate:run:local
 ```
 
 ## Queries & Mutations
